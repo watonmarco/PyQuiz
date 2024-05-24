@@ -104,6 +104,17 @@ def mostrarPregunta():
     enunciado.pack(pady=45)
 
     actualizarInterfaz()
+    
+def reiniciar():
+    global num_pregunta, pregunta_actual
+    num_pregunta = 0
+    puntos = 0
+    pregunta_actual = Pregunta(DATA[num_pregunta])
+    actualizarInterfaz()
+    
+    pantalla_puntajes.pack_forget()
+    pantalla_inicio.pack(fill="both")
+    #mostrarPregunta()
             
 ventana = tk.Tk()
 ventana.title("PyQuiz") 
@@ -135,6 +146,9 @@ pantalla_puntajes = ttk.Frame(ventana)
 ttk.Label(pantalla_puntajes, text="Puntajes:").pack(pady=10)
 lista_puntajes = ttk.Label(pantalla_puntajes, text="")
 lista_puntajes.pack(pady=10)
+# reinicio
+btn_reinicio = ttk.Button(pantalla_puntajes, command=reiniciar, text="Reiniciar")
+btn_reinicio.pack(pady=40)
 
 mostrarPregunta()
 
