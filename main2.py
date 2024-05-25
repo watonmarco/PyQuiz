@@ -66,8 +66,11 @@ def responderCorrecto():
 def responderIncorrecto():
     resultado.configure(text="Incorrecto")
     resultado.pack()
-    
     btn_siguiente.pack(pady=30)
+
+    global puntos
+    puntos -= 1
+    puntuacion.configure(text=f"Puntuación: {puntos}")
 
 def siguientePregunta():
     global num_pregunta, pregunta_actual
@@ -85,7 +88,7 @@ def actualizarInterfaz():
     for boton in botones_opciones:
         boton.pack_forget()
 
-    enunciado.config(text=pregunta_actual.getEnunciado())
+    enunciado.configure(text=pregunta_actual.getEnunciado())
     botones_opciones.clear()
 
     for opcion in pregunta_actual.getOpciones():
@@ -106,9 +109,11 @@ def mostrarPregunta():
     actualizarInterfaz()
     
 def reiniciar():
-    global num_pregunta, pregunta_actual
+    global num_pregunta, pregunta_actual, puntos
     num_pregunta = 0
     puntos = 0
+    
+    puntuacion.configure(text=f"Puntuación: {puntos}")
     pregunta_actual = Pregunta(DATA[num_pregunta])
     actualizarInterfaz()
     
