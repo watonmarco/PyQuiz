@@ -36,13 +36,13 @@ def iniciarQuiz():
 def guardarPuntaje():
     puntajes = cargarPuntajes()
     puntajes.append({"nombre": nombre_usuario, "puntaje": puntos})
-    with open("puntajes.json", "w") as file:
-        json.dump(puntajes, file)
+    with open("puntajes.json", "w") as file: # "w" = write
+        json.dump(puntajes, file) # para escribir sobre el .json
 
 def cargarPuntajes():
     try:
-        with open("puntajes.json", "r") as file:
-            return json.load(file)
+        with open("puntajes.json", "r") as file: # "r" = read
+            return json.load(file) # se carga el contenido del .json y lo muestra
     except FileNotFoundError:
         return []
 
@@ -51,13 +51,15 @@ def mostrarPuntajes():
     pantalla_puntajes.pack(fill="both", expand=True)
 
     puntajes = cargarPuntajes()
-    texto_puntajes = "\n".join([f"{p['nombre']}: {p['puntaje']}" for p in puntajes])
+    puntajes_ordenados = sorted(puntajes, key=lambda x: x["puntaje"], reverse=True) # se ordenan los puntajes de forma descendente
+    texto_puntajes = "\n".join([f"{p['nombre']}: {p['puntaje']}" for p in puntajes_ordenados]) # se muestran los puntajes
     lista_puntajes.configure(text=texto_puntajes)
 
 def responderCorrecto():
     resultado.configure(text="¡Correcto!")
     resultado.pack()
     btn_siguiente.pack(pady=30)
+    desactivarBotones()
 
     global puntos
     puntos += 1
@@ -67,10 +69,15 @@ def responderIncorrecto():
     resultado.configure(text="Incorrecto")
     resultado.pack()
     btn_siguiente.pack(pady=30)
+    desactivarBotones()
 
     global puntos
     puntos -= 1
     puntuacion.configure(text=f"Puntuación: {puntos}")
+
+def desactivarBotones():
+    for boton in botones_opciones:
+        boton.state(['disabled']) # se cambia el estado del botón a "desactivado"
 
 def siguientePregunta():
     global num_pregunta, pregunta_actual
@@ -103,7 +110,6 @@ def actualizarInterfaz():
 
 def mostrarPregunta():
     puntuacion.place(relx=1, y=0, anchor="ne")
-
     enunciado.pack(pady=45)
 
     actualizarInterfaz()
@@ -119,7 +125,6 @@ def reiniciar():
     
     pantalla_puntajes.pack_forget()
     pantalla_inicio.pack(fill="both")
-    #mostrarPregunta()
             
 ventana = tk.Tk()
 ventana.title("PyQuiz") 
