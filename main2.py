@@ -43,10 +43,7 @@ def guardarPuntaje():
 def cargarPuntajes():
     try:
         with open("puntajes.json", "r") as file: # "r" = read
-            puntajes = json.load(file)
-            for p in puntajes:
-                p["puntaje"] = int(p["puntaje"])  
-            return puntajes
+            return json.load(file) # se carga el contenido del .json y lo muestra
     except FileNotFoundError:
         return []
 
