@@ -43,7 +43,10 @@ def guardarPuntaje():
 def cargarPuntajes():
     try:
         with open("puntajes.json", "r") as file: # "r" = read
-            return json.load(file) # se carga el contenido del .json y lo muestra
+            puntajes = json.load(file)
+            for p in puntajes:
+                p["puntaje"] = int(p["puntaje"])  
+            return puntajes
     except FileNotFoundError:
         return []
 
@@ -52,7 +55,7 @@ def mostrarPuntajes():
     pantalla_puntajes.pack(fill="both", expand=True)
 
     puntajes = cargarPuntajes()
-    puntajes_ordenados = sorted(puntajes, key=lambda x: x["puntaje"], reverse=True)[:10] # se ordenan los 10 mejores puntajes de forma descendente
+    puntajes_ordenados = sorted(puntajes, key=lambda x: x["puntaje"], reverse=True)[:10] # se ordenan los puntajes de forma descendente y se muestran los 10 mejores
     texto_puntajes = "\n".join([f"{i+1}. {p['nombre']}: {p['puntaje']}" for i, p in enumerate(puntajes_ordenados)]) # se muestran los puntajes enumerados
     lista_puntajes.configure(text=texto_puntajes)
 
