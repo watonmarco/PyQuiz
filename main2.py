@@ -32,6 +32,7 @@ def iniciarQuiz():
         pantalla_inicio.pack_forget()
         pantalla_quiz.pack(fill="both")
         mostrarPregunta()
+        mostrarJugador()
 
 def guardarPuntaje():
     puntajes = cargarPuntajes()
@@ -51,8 +52,8 @@ def mostrarPuntajes():
     pantalla_puntajes.pack(fill="both", expand=True)
 
     puntajes = cargarPuntajes()
-    puntajes_ordenados = sorted(puntajes, key=lambda x: x["puntaje"], reverse=True) # se ordenan los puntajes de forma descendente
-    texto_puntajes = "\n".join([f"{p['nombre']}: {p['puntaje']}" for p in puntajes_ordenados]) # se muestran los puntajes
+    puntajes_ordenados = sorted(puntajes, key=lambda x: x["puntaje"], reverse=True)[:10] # se ordenan los 10 mejores puntajes de forma descendente
+    texto_puntajes = "\n".join([f"{i+1}. {p['nombre']}: {p['puntaje']}" for i, p in enumerate(puntajes_ordenados)]) # se muestran los puntajes enumerados
     lista_puntajes.configure(text=texto_puntajes)
 
 def responderCorrecto():
@@ -109,7 +110,7 @@ def actualizarInterfaz():
     btn_siguiente.pack_forget()
 
 def mostrarPregunta():
-    puntuacion.place(relx=1, y=0, anchor="ne")
+    puntuacion.place(relx=1, x=-10, y=10, anchor="ne")
     enunciado.pack(pady=45)
 
     actualizarInterfaz()
@@ -125,6 +126,10 @@ def reiniciar():
     
     pantalla_puntajes.pack_forget()
     pantalla_inicio.pack(fill="both")
+
+def mostrarJugador():
+    jugador.configure(text=f"Jugador: {nombre_usuario}")
+    jugador.place(x=10, y=10, anchor="nw")
             
 ventana = tk.Tk()
 ventana.title("PyQuiz") 
@@ -150,6 +155,9 @@ resultado = ttk.Label(pantalla_quiz, text="")
 resultado.pack()
 btn_siguiente = ttk.Button(pantalla_quiz, command=siguientePregunta, text="Continuar")
 botones_opciones = []
+
+jugador = ttk.Label(pantalla_quiz, text="")
+jugador.pack(pady=10)
 
 # Pantalla de puntajes
 pantalla_puntajes = ttk.Frame(ventana)
