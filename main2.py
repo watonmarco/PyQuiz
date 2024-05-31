@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from preguntas import DATA
 import json
+import random as rd
 
 class Pregunta:
     def __init__(self, dict_pregunta):
@@ -21,9 +22,10 @@ class Pregunta:
     def verificarRespuesta(self, respuesta): # str -> bool
         return self.respuestas.index(respuesta) == self.respuesta_correcta
     
-num_pregunta = 0
 puntos = 0
-pregunta_actual = Pregunta(DATA[num_pregunta])
+preguntas_ronda = DATA.copy()
+temp_pregunta = rd.choice(preguntas_ronda)
+pregunta_actual = Pregunta(temp_pregunta)
 
 def iniciarQuiz():
     global nombre_usuario
@@ -52,7 +54,7 @@ def mostrarPuntajes():
     pantalla_puntajes.pack(fill="both", expand=True)
 
     puntajes = cargarPuntajes()
-    puntajes_ordenados = sorted(puntajes, key=lambda x: x["puntaje"], reverse=True)[:10] # se ordenan los puntajes de forma descendente y se muestran los 10 mejores
+    puntajes_ordenados = sorted(puntajes, key=lambda x: x["puntaje"], reverse=True)[:10] # se ordenan los 10 mejores puntajes de forma descendente
     texto_puntajes = "\n".join([f"{i+1}. {p['nombre']}: {p['puntaje']}" for i, p in enumerate(puntajes_ordenados)]) # se muestran los puntajes enumerados
     lista_puntajes.configure(text=texto_puntajes)
 
@@ -81,15 +83,27 @@ def desactivarBotones():
         boton.state(['disabled']) # se cambia el estado del botón a "desactivado"
 
 def siguientePregunta():
-    global num_pregunta, pregunta_actual
-    num_pregunta += 1
+    global preguntas_ronda, pregunta_actual, temp_pregunta
+    
+    print("Preguntas antes de remover:", len(preguntas_ronda))
+    print("Pregunta a remover:", temp_pregunta)
+    
+    if temp_pregunta in preguntas_ronda:
+        preguntas_ronda.remove(temp_pregunta)
+        print("Pregunta removida")
+    else:
+        print("Pregunta no encontrada en preguntas_ronda")
+        
+    print("Preguntas después de remover:", len(preguntas_ronda))
 
-    if num_pregunta < len(DATA):
-        pregunta_actual = Pregunta(DATA[num_pregunta])
+    if len(preguntas_ronda) != 0:
+        temp_pregunta = rd.choice(preguntas_ronda)
+        pregunta_actual = Pregunta(temp_pregunta)
         actualizarInterfaz()
     else:
         guardarPuntaje()
         mostrarPuntajes()
+
 
 def actualizarInterfaz():
     resultado.configure(text="")
@@ -116,12 +130,15 @@ def mostrarPregunta():
     actualizarInterfaz()
     
 def reiniciar():
-    global num_pregunta, pregunta_actual, puntos
-    num_pregunta = 0
+    global pregunta_actual, puntos, preguntas_ronda, temp_pregunta
+
+    preguntas_ronda = DATA.copy()
+    temp_pregunta = rd.choice(preguntas_ronda)
+    pregunta_actual = Pregunta(temp_pregunta)
+
     puntos = 0
     
     puntuacion.configure(text=f"Puntuación: {puntos}")
-    pregunta_actual = Pregunta(DATA[num_pregunta])
     actualizarInterfaz()
     
     pantalla_puntajes.pack_forget()
