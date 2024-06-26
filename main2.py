@@ -30,11 +30,15 @@ pregunta_actual = Pregunta(temp_pregunta)
 def iniciarQuiz():
     global nombre_usuario
     nombre_usuario = entrada_nombre.get()
-    if nombre_usuario:
+    if (nombre_usuario != "admin") and (nombre_usuario != ""):
         pantalla_inicio.pack_forget()
         pantalla_quiz.pack(fill="both")
         mostrarPregunta()
         mostrarJugador()
+    elif nombre_usuario == "admin":
+        btn_admin = ttk.Button(pantalla_inicio, text="admin")
+        btn_admin.pack(pady=10)
+        ttk.Label(pantalla_inicio, text="Esto aún no hace nada xd", font=("Arial", 8, "italic")).pack()
 
 def guardarPuntaje():
     puntajes = cargarPuntajes()
@@ -48,9 +52,14 @@ def cargarPuntajes():
             return json.load(file) # se carga el contenido del .json y lo muestra
     except FileNotFoundError:
         return []
+    
+def jugar():
+    pantalla_principal.pack_forget()
+    pantalla_inicio.pack(fill="both", expand=True)
 
 def mostrarPuntajes():
     pantalla_quiz.pack_forget()
+    pantalla_principal.pack_forget()
     pantalla_puntajes.pack(fill="both", expand=True)
 
     puntajes = cargarPuntajes()
@@ -151,10 +160,21 @@ def mostrarJugador():
 ventana = tk.Tk()
 ventana.title("PyQuiz") 
 ventana.geometry('600x450')
+ventana.iconbitmap("necoarc.ico") # imagen original: https://www.deviantart.com/a-ngl/art/Neco-Arc-Emote-925437130
+
+# Pantalla principal
+pantalla_principal = ttk.Frame(ventana)
+pantalla_principal.pack(fill="both", expand=True)
+ttk.Label(pantalla_principal, text="PyQuiz", font=("Arial", 25, "bold")).pack(pady=50)
+#ttk.Label(pantalla_principal, text=":DDDDDD", font=("Arial", 8)).pack()
+btn_jugar = ttk.Button(pantalla_principal, text="Jugar", command=jugar)
+btn_jugar.pack(pady=10)
+
+btn_puntajes = ttk.Button(pantalla_principal, text="Ver puntajes", command=mostrarPuntajes)
+btn_puntajes.pack()
 
 # Pantalla de inicio
 pantalla_inicio = ttk.Frame(ventana)
-pantalla_inicio.pack(fill="both", expand=True)
 ttk.Label(pantalla_inicio, text="Ingrese su nombre:").pack(pady=10)
 entrada_nombre = ttk.Entry(pantalla_inicio)
 entrada_nombre.pack(pady=10)
@@ -176,12 +196,15 @@ botones_opciones = []
 jugador = ttk.Label(pantalla_quiz, text="")
 jugador.pack(pady=10)
 
+#btn_salir = ttk.Button(pantalla_quiz, text="Salir", command=iniciarQuiz)
+#btn_salir.pack()
+
 # Pantalla de puntajes
 pantalla_puntajes = ttk.Frame(ventana)
 ttk.Label(pantalla_puntajes, text="Puntajes:").pack(pady=10)
 lista_puntajes = ttk.Label(pantalla_puntajes, text="")
 lista_puntajes.pack(pady=10)
-# reinicio
+
 btn_reinicio = ttk.Button(pantalla_puntajes, command=reiniciar, text="Reiniciar")
 btn_reinicio.pack(pady=40)
 
