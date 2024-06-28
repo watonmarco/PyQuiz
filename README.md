@@ -2,13 +2,17 @@
 
 - main.py ❌ _sin uso_
 
-- main2.py ✅ _en uso_
+- main2.py 🟨 _en uso?_
 
 - main3.py ❌ _sin uso_
+
+- mainClases.py ✅ _en uso_
 
 - preguntas.py ✅ _en uso_
 
 - necoarc.ico [^1]✅ _en uso_
+
+- HeartSprite (3).png✅ _en uso_
 
 
 
