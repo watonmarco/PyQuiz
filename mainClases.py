@@ -92,6 +92,9 @@ def iniciarQuiz():
         mostrarPregunta()
         mostrarJugador()
         mostrarVidas()
+        jgd.setPuntos(0)
+        jgd.setVidas(3)
+        puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}")
     elif jgd.getNombre() == "admin":
         btn_admin = ttk.Button(pantalla_inicio, text="admin")
         btn_admin.pack(pady=10)
@@ -184,14 +187,14 @@ def reiniciar():
     temp_pregunta = rd.choice(preguntas_ronda)
     pregunta_actual = Pregunta(temp_pregunta)
 
-    jgd.setPuntos(0)
-    jgd.setVidas(3)
+    #jgd.setPuntos(0) # movido a función jugar()
+    #jgd.setVidas(3)  # movido a función jugar()
     
-    puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}")
+    #puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}") # movido a función jugar()
     actualizarInterfaz()
     
     pantalla_puntajes.pack_forget()
-    pantalla_inicio.pack(fill="both")
+    pantalla_principal.pack(fill="both")
 
 def mostrarJugador():
     jugador = ttk.Label(pantalla_quiz, text=f"Jugador: {jgd.getNombre()}")
@@ -235,7 +238,6 @@ btn_iniciar.pack(pady=10)
 
 # Pantalla del quiz
 pantalla_quiz = ttk.Frame(ventana)
-
 puntuacion = ttk.Label(pantalla_quiz, text=f"Puntuación: {0}")
 puntuacion.pack(anchor="ne", padx=10, pady=10)
 enunciado = ttk.Label(pantalla_quiz, text="")
@@ -247,8 +249,6 @@ botones_opciones = []
 
 img_vidas = PhotoImage(file="HeartSprite (3).png")
 
-
-
 #btn_salir = ttk.Button(pantalla_quiz, text="Salir", command=iniciarQuiz)
 #btn_salir.pack()
 
@@ -258,7 +258,7 @@ ttk.Label(pantalla_puntajes, text="Puntajes:").pack(pady=10)
 lista_puntajes = ttk.Label(pantalla_puntajes, text="")
 lista_puntajes.pack(pady=10)
 
-btn_reinicio = ttk.Button(pantalla_puntajes, command=reiniciar, text="Reiniciar")
+btn_reinicio = ttk.Button(pantalla_puntajes, command=reiniciar, text="Volver")
 btn_reinicio.pack(pady=40)
 
 mostrarPregunta()
