@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import PhotoImage
 from preguntas import DATA
 import json
 import random as rd
@@ -26,15 +27,32 @@ class Jugador:
     def __init__(self, nombre):
         self.nombre = nombre
         self.puntos = 0
+        self.vidas = 3
 
     def getNombre(self):
         return self.nombre
 
     def getPuntos(self):
         return self.puntos
+    
+    def setPuntos(self, nueva_puntacion):
+        self.puntos = nueva_puntacion
 
-    def setPuntos(self, nueva_puntuacion):
-        self.puntos = nueva_puntuacion
+    def sumarPuntos(self):
+        self.puntos += 1
+    
+    def getVidas(self):
+        return self.vidas
+    
+    def setVidas(self, num_vidas):
+        self.vidas = num_vidas
+
+    def restarVidas(self):
+        global corazones
+        self.vidas -= 1
+        corazones[-1].config(image="")
+        corazones.pop()
+
 
 class InterfazJSON:
     def __init__(self):
@@ -56,6 +74,7 @@ class InterfazJSON:
     def getPreguntas(self):
         return self.preguntas
 
+
 js = InterfazJSON()
 preguntas_ronda = js.getPreguntas().copy()
 
@@ -72,12 +91,11 @@ def iniciarQuiz():
         pantalla_quiz.pack(fill="both")
         mostrarPregunta()
         mostrarJugador()
+        mostrarVidas()
     elif jgd.getNombre() == "admin":
         btn_admin = ttk.Button(pantalla_inicio, text="admin")
         btn_admin.pack(pady=10)
         ttk.Label(pantalla_inicio, text="Esto aún no hace nada xd", font=("Arial", 8, "italic")).pack()
-
-
     
 def jugar():
     pantalla_principal.pack_forget()
@@ -100,7 +118,7 @@ def responderCorrecto():
     desactivarBotones()
 
     global jgd
-    jgd.setPuntos(jgd.getPuntos() + 1) 
+    jgd.sumarPuntos() 
     puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}")
     
 def responderIncorrecto():
@@ -110,8 +128,7 @@ def responderIncorrecto():
     desactivarBotones()
 
     global jgd
-    jgd.setPuntos(jgd.getPuntos() - 1) 
-    puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}")
+    jgd.restarVidas()
 
 def desactivarBotones():
     for boton in botones_opciones:
@@ -120,17 +137,13 @@ def desactivarBotones():
 def siguientePregunta():
     global preguntas_ronda, pregunta_actual, temp_pregunta
     
-    print("Preguntas antes de remover:", len(preguntas_ronda))
-    print("Pregunta a remover:", temp_pregunta)
-    
+    if jgd.getVidas() <= 0:
+        js.guardarPuntaje(jgd.getNombre(), jgd.getPuntos())
+        mostrarPuntajes()
+
     if temp_pregunta in preguntas_ronda:
         preguntas_ronda.remove(temp_pregunta)
-        print("Pregunta removida")
-    else:
-        print("Pregunta no encontrada en preguntas_ronda")
         
-    print("Preguntas después de remover:", len(preguntas_ronda))
-
     if len(preguntas_ronda) != 0:
         temp_pregunta = rd.choice(preguntas_ronda)
         pregunta_actual = Pregunta(temp_pregunta)
@@ -160,7 +173,7 @@ def actualizarInterfaz():
 
 def mostrarPregunta():
     puntuacion.place(relx=1, x=-10, y=10, anchor="ne")
-    enunciado.pack(pady=45)
+    enunciado.pack(pady=60)
 
     actualizarInterfaz()
     
@@ -172,6 +185,7 @@ def reiniciar():
     pregunta_actual = Pregunta(temp_pregunta)
 
     jgd.setPuntos(0)
+    jgd.setVidas(3)
     
     puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}")
     actualizarInterfaz()
@@ -180,8 +194,20 @@ def reiniciar():
     pantalla_inicio.pack(fill="both")
 
 def mostrarJugador():
-    jugador.configure(text=f"Jugador: {jgd.getNombre()}")
+    jugador = ttk.Label(pantalla_quiz, text=f"Jugador: {jgd.getNombre()}")
     jugador.place(x=10, y=10, anchor="nw")
+
+def mostrarVidas():
+    global corazones
+    vidastxt = ttk.Label(pantalla_quiz, text="Vidas: ")
+    vidastxt.place(x=10, y=31, anchor="nw")
+    espaciado = 45
+    corazones = []
+    for i in range(jgd.getVidas()):
+        corazon = tk.Label(ventana, image=img_vidas)
+        corazon.place(x=espaciado, y=33, anchor="nw")
+        espaciado += 20
+        corazones.append(corazon)
             
 ventana = tk.Tk()
 ventana.title("PyQuiz") 
@@ -219,8 +245,9 @@ resultado.pack()
 btn_siguiente = ttk.Button(pantalla_quiz, command=siguientePregunta, text="Continuar")
 botones_opciones = []
 
-jugador = ttk.Label(pantalla_quiz, text="")
-jugador.pack(pady=10)
+img_vidas = PhotoImage(file="HeartSprite (3).png")
+
+
 
 #btn_salir = ttk.Button(pantalla_quiz, text="Salir", command=iniciarQuiz)
 #btn_salir.pack()
