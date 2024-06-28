@@ -95,6 +95,7 @@ def iniciarQuiz():
         jgd.setPuntos(0)
         jgd.setVidas(3)
         puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}")
+
     elif jgd.getNombre() == "admin":
         btn_admin = ttk.Button(pantalla_inicio, text="admin")
         btn_admin.pack(pady=10)
@@ -137,12 +138,18 @@ def desactivarBotones():
     for boton in botones_opciones:
         boton.state(['disabled']) # se cambia el estado del botón a "desactivado"
 
+def terminarJuego():
+    global corazones, js
+    js.guardarPuntaje(jgd.getNombre(), jgd.getPuntos())
+    mostrarPuntajes()
+    for corazon in corazones:
+        corazon.config(image="")
+
 def siguientePregunta():
     global preguntas_ronda, pregunta_actual, temp_pregunta
     
     if jgd.getVidas() <= 0:
-        js.guardarPuntaje(jgd.getNombre(), jgd.getPuntos())
-        mostrarPuntajes()
+        terminarJuego()
 
     if temp_pregunta in preguntas_ronda:
         preguntas_ronda.remove(temp_pregunta)
@@ -152,9 +159,7 @@ def siguientePregunta():
         pregunta_actual = Pregunta(temp_pregunta)
         actualizarInterfaz()
     else:
-        js.guardarPuntaje(jgd.getNombre(), jgd.getPuntos())
-        mostrarPuntajes()
-
+        terminarJuego()
 
 def actualizarInterfaz():
     resultado.configure(text="")
@@ -174,9 +179,10 @@ def actualizarInterfaz():
     
     btn_siguiente.pack_forget()
 
+
 def mostrarPregunta():
     puntuacion.place(relx=1, x=-10, y=10, anchor="ne")
-    enunciado.pack(pady=60)
+    enunciado.pack(pady=30)
 
     actualizarInterfaz()
     
@@ -193,8 +199,15 @@ def reiniciar():
     #puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}") # movido a función jugar()
     actualizarInterfaz()
     
+    pantalla_quiz.pack_forget()
     pantalla_puntajes.pack_forget()
     pantalla_principal.pack(fill="both")
+
+def volver():
+    reiniciar()
+    for corazon in corazones:
+        corazon.config(image="")
+
 
 def mostrarJugador():
     jugador = ttk.Label(pantalla_quiz, text=f"Jugador: {jgd.getNombre()}")
@@ -240,10 +253,12 @@ btn_iniciar.pack(pady=10)
 pantalla_quiz = ttk.Frame(ventana)
 puntuacion = ttk.Label(pantalla_quiz, text=f"Puntuación: {0}")
 puntuacion.pack(anchor="ne", padx=10, pady=10)
+
+btn_volver = ttk.Button(pantalla_quiz, command=volver, text="Volver")
+btn_volver.pack(anchor="ne", padx=10, pady=30)
+
 enunciado = ttk.Label(pantalla_quiz, text="")
-enunciado.pack(pady=20)
 resultado = ttk.Label(pantalla_quiz, text="")
-resultado.pack()
 btn_siguiente = ttk.Button(pantalla_quiz, command=siguientePregunta, text="Continuar")
 botones_opciones = []
 
