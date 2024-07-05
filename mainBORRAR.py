@@ -74,7 +74,7 @@ class InterfazJSON:
     def getPreguntas(self):
         return self.preguntas
 
-    def borrarPuntajes(self):
+    def borrarPuntajes(self): # NUEVO
         with open('puntajes.json', 'r') as file:
             data = json.load(file)
         
@@ -108,7 +108,7 @@ def iniciarQuiz():
         jgd.setVidas(3)
         puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}")
 
-    elif jgd.getNombre() == "admin":
+    elif jgd.getNombre() == "admin": # NUEVO
         btn_iniciar.state(["disabled"])
         btn_admin = ttk.Button(pantalla_inicio, command=mostrarPuntajesAdmin, text="admin")
         btn_admin.pack(pady=10)
@@ -128,7 +128,7 @@ def mostrarPuntajes():
     texto_puntajes = "\n".join([f"{i+1}. {p['nombre']}: {p['puntaje']}" for i, p in enumerate(puntajes_ordenados)]) # se muestran los puntajes enumerados
     lista_puntajes.configure(text=texto_puntajes)
 
-def mostrarPuntajesAdmin():
+def mostrarPuntajesAdmin(): # NUEVO
     mostrarPuntajes()
     btn_borrar = btn_volver = ttk.Button(pantalla_puntajes, command=borrar, text="Volver")
     btn_borrar.pack(anchor="ne", padx=10, pady=30)
@@ -226,7 +226,7 @@ def volver():
     for corazon in corazones:
         corazon.config(image="")
 
-def borrar():
+def borrar(): # NUEVO
     if jgd.getNombre == "admin":
         js.borrarPuntajes()
         
