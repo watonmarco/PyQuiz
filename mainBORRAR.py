@@ -74,7 +74,7 @@ class InterfazJSON:
     def getPreguntas(self):
         return self.preguntas
 
-    def borrarPuntajes(self): # NUEVO
+    def borrarPuntajes(self):
         with open('puntajes.json', 'r') as file:
             data = json.load(file)
         
@@ -108,17 +108,21 @@ def iniciarQuiz():
         jgd.setVidas(3)
         puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}")
 
-    elif jgd.getNombre() == "admin": # NUEVO
+    elif jgd.getNombre() == "admin":
+        global btn_admin
         btn_iniciar.state(["disabled"])
         btn_admin = ttk.Button(pantalla_inicio, command=mostrarPuntajesAdmin, text="admin")
         btn_admin.pack(pady=10)
 
 
 def jugar():
+    btn_iniciar.state(['!disabled']) 
     pantalla_principal.pack_forget()
     pantalla_inicio.pack(fill="both", expand=True)
 
+
 def mostrarPuntajes():
+    pantalla_inicio.pack_forget()
     pantalla_quiz.pack_forget()
     pantalla_principal.pack_forget()
     pantalla_puntajes.pack(fill="both", expand=True)
@@ -128,9 +132,10 @@ def mostrarPuntajes():
     texto_puntajes = "\n".join([f"{i+1}. {p['nombre']}: {p['puntaje']}" for i, p in enumerate(puntajes_ordenados)]) # se muestran los puntajes enumerados
     lista_puntajes.configure(text=texto_puntajes)
 
-def mostrarPuntajesAdmin(): # NUEVO
+def mostrarPuntajesAdmin():
     mostrarPuntajes()
-    btn_borrar = btn_volver = ttk.Button(pantalla_puntajes, command=borrar, text="Volver")
+    global btn_borrar
+    btn_borrar = ttk.Button(pantalla_puntajes, command=borrar, text="Borrar")
     btn_borrar.pack(anchor="ne", padx=10, pady=30)
 
 def responderCorrecto():
@@ -205,8 +210,9 @@ def mostrarPregunta():
     actualizarInterfaz()
     
 def reiniciar():
-    global pregunta_actual, jgd, preguntas_ronda, temp_pregunta
-
+    global pregunta_actual, jgd, preguntas_ronda, temp_pregunta, btn_borrar, btn_admin
+    btn_borrar.pack_forget()
+    btn_admin.pack_forget()
     preguntas_ronda = DATA.copy()
     temp_pregunta = rd.choice(preguntas_ronda)
     pregunta_actual = Pregunta(temp_pregunta)
@@ -226,7 +232,7 @@ def volver():
     for corazon in corazones:
         corazon.config(image="")
 
-def borrar(): # NUEVO
+def borrar():
     if jgd.getNombre == "admin":
         js.borrarPuntajes()
         
