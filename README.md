@@ -2,11 +2,13 @@
 
 - main.py ❌ _sin uso_
 
-- main2.py 🟨 _en uso?_
+- main2.py ❌ _sin uso_
 
 - main3.py ❌ _sin uso_
 
-- mainClases.py ✅ _en uso_
+- mainClases.py 🟨 _en uso?_
+
+- mainBORRAR.py ✅ _en uso_
 
 - preguntas.py ✅ _en uso_
 
