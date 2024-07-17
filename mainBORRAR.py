@@ -197,7 +197,6 @@ def actualizarInterfaz():
     
     btn_siguiente.pack_forget()
 
-
 def mostrarPregunta():
     puntuacion.place(relx=1, x=-10, y=10, anchor="ne")
     enunciado.pack(pady=30)
@@ -246,6 +245,7 @@ ventana = tk.Tk()
 ventana.title("PyQuiz") 
 ventana.geometry('600x450')
 ventana.iconbitmap("necoarc.ico") # imagen original: https://www.deviantart.com/a-ngl/art/Neco-Arc-Emote-925437130
+#ventana.resizable(False,False)
 
 # Pantalla principal
 pantalla_principal = ttk.Frame(ventana)
