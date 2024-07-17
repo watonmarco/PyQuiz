@@ -53,7 +53,6 @@ class Jugador:
         corazones[-1].config(image="")
         corazones.pop()
 
-
 class InterfazJSON:
     def __init__(self):
         self.preguntas = DATA
@@ -62,7 +61,7 @@ class InterfazJSON:
         puntajes = self.cargarPuntajes()
         puntajes.append({"nombre": nombre, "puntaje": puntos})
         with open("puntajes.json", "w") as file: # "w" = write
-            json.dump(puntajes, file) # para escribir sobre el .json
+            json.dump(puntajes, file, indent=1) # para escribir sobre el .json
 
     def cargarPuntajes(self):
         try:
@@ -77,15 +76,14 @@ class InterfazJSON:
     def borrarPuntajes(self):
         with open('puntajes.json', 'r') as file:
             data = json.load(file)
-        
-        # checking if the key exists before removing
-        for key_to_remove in data:
-            data.pop(key_to_remove)
-        
-        # saving the updated JSON data back to the file
-        with open('output.json', 'w') as file:
-            json.dump(data, file, indent=2)
 
+        with open('puntajes.json', 'w') as file:
+            json.dump([], file) # reemplaza el contenido del .json por una lista vacía
+
+        with open('puntajes-backup.json', 'w') as file:
+            json.dump(data, file, indent=1) # crea una copia de seguridad de los puntajes borrados
+
+        print("Puntajes borrados exitosamente")
 
 js = InterfazJSON()
 preguntas_ronda = js.getPreguntas().copy()
@@ -94,7 +92,6 @@ temp_pregunta = rd.choice(preguntas_ronda)
 pregunta_actual = Pregunta(temp_pregunta)
 
 def iniciarQuiz():
-
     global jgd
     jgd = Jugador(entrada_nombre.get())
 
@@ -114,12 +111,10 @@ def iniciarQuiz():
         btn_admin = ttk.Button(pantalla_inicio, command=mostrarPuntajesAdmin, text="admin")
         btn_admin.pack(pady=10)
 
-
 def jugar():
     btn_iniciar.state(['!disabled']) 
     pantalla_principal.pack_forget()
     pantalla_inicio.pack(fill="both", expand=True)
-
 
 def mostrarPuntajes():
     pantalla_inicio.pack_forget()
@@ -217,10 +212,6 @@ def reiniciar():
     temp_pregunta = rd.choice(preguntas_ronda)
     pregunta_actual = Pregunta(temp_pregunta)
 
-    #jgd.setPuntos(0) # movido a función jugar()
-    #jgd.setVidas(3)  # movido a función jugar()
-    
-    #puntuacion.configure(text=f"Puntuación: {jgd.getPuntos()}") # movido a función jugar()
     actualizarInterfaz()
     
     pantalla_quiz.pack_forget()
@@ -233,10 +224,8 @@ def volver():
         corazon.config(image="")
 
 def borrar():
-    if jgd.getNombre == "admin":
-        js.borrarPuntajes()
+    js.borrarPuntajes()
         
-
 def mostrarJugador():
     jugador = ttk.Label(pantalla_quiz, text=f"Jugador: {jgd.getNombre()}")
     jugador.place(x=10, y=10, anchor="nw")
@@ -262,12 +251,14 @@ ventana.iconbitmap("necoarc.ico") # imagen original: https://www.deviantart.com/
 pantalla_principal = ttk.Frame(ventana)
 pantalla_principal.pack(fill="both", expand=True)
 ttk.Label(pantalla_principal, text="PyQuiz", font=("Arial", 25, "bold")).pack(pady=50)
-#ttk.Label(pantalla_principal, text=":DDDDDD", font=("Arial", 8)).pack()
 btn_jugar = ttk.Button(pantalla_principal, text="Jugar", command=jugar)
 btn_jugar.pack(pady=10)
 
 btn_puntajes = ttk.Button(pantalla_principal, text="Ver puntajes", command=mostrarPuntajes)
 btn_puntajes.pack()
+
+btn_borrar = ttk.Button(pantalla_principal, text="")
+btn_admin = ttk.Button(pantalla_principal, text="")
 
 # Pantalla de inicio
 pantalla_inicio = ttk.Frame(ventana)
@@ -291,9 +282,6 @@ btn_siguiente = ttk.Button(pantalla_quiz, command=siguientePregunta, text="Conti
 botones_opciones = []
 
 img_vidas = PhotoImage(file="HeartSprite (3).png")
-
-#btn_salir = ttk.Button(pantalla_quiz, text="Salir", command=iniciarQuiz)
-#btn_salir.pack()
 
 # Pantalla de puntajes
 pantalla_puntajes = ttk.Frame(ventana)
